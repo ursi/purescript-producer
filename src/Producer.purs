@@ -1,5 +1,5 @@
 module Producer
-  (Producer(..)
+  ( Producer(..)
   , producer
   , lift
   , liftRefEq

@@ -1,9 +1,10 @@
 module Producer
   ( Producer(..)
+  , class Producible
+  , produce
   , producer
   , lift
   , liftRefEq
-  , produce
   )
   where
 
@@ -54,5 +55,10 @@ liftRefEq = producer unRefEq <. RefEq
 unRefEq :: ∀ a. RefEq a -> a
 unRefEq (RefEq a) = a
 
-produce :: ∀ a. Producer a -> a
-produce (Producer p) = p \(f /\ b) -> f b
+class Producible a b | a -> b where
+  produce :: a -> b
+
+instance producibleProducer :: Producible (Producer a) a where
+  produce (Producer p) = p \(f /\ b) -> f b
+else instance producibleA :: Producible a a where
+  produce = identity

@@ -49,5 +49,3 @@ main = do
   assertFalse' "14" $ producer5 add5 1 2 3 4 5 == producer5 add5 2 2 3 4 5
   assert' "15" $ producer6 add6 1 2 3 4 5 6 == producer6 add6 1 2 3 4 5 6
   assertFalse' "16" $ producer6 add6 1 2 3 4 5 6 == producer6 add6 2 2 3 4 5 6
-  assert' "17" $ (liftRefEq plus1 <*> lift 1)  == (liftRefEq plus1 <*> lift 1)
-  assertFalse' "18" $ (liftRefEq plus1 <*> lift 1)  == (liftRefEq plus1 <*> lift 2)

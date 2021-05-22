@@ -50,51 +50,40 @@ instance eqProducer :: Eq (Producer a) where
 producer :: ∀ a b. Eq b => (b -> a) -> b -> Producer a
 producer f b = Producer (_ $ f /\ b)
 
-producer2 :: ∀ a b c. Eq (b /\ c) => (b -> c -> a) -> b -> c -> Producer a
-producer2 f b c = producer producer2Helper $ RefEq f /\ b /\ c
+producer2 :: ∀ a b c. Eq b => Eq c => (b -> c -> a) -> b -> c -> Producer a
+producer2 f b c = liftRefEq f <*> lift b <*> lift c
 
-producer2Helper :: ∀ a b c. RefEq (b -> c -> a) /\ b /\ c -> a
-producer2Helper (RefEq f /\ b /\ c) = f b c
-
-producer3 :: ∀ a b c d. Eq (b /\ c /\ d) => (b -> c -> d -> a) -> b -> c -> d -> Producer a
-producer3 f b c d = producer producer3Helper $ RefEq f /\ b /\ c /\ d
-
-producer3Helper :: ∀ a b c d. RefEq (b -> c -> d -> a) /\ b /\ c /\ d -> a
-producer3Helper (RefEq f /\ b /\ c /\ d) = f b c d
+producer3 :: ∀ a b c d.
+  Eq b => Eq c => Eq d
+  => (b -> c -> d -> a)
+  -> b -> c -> d
+  -> Producer a
+producer3 f b c d = liftRefEq f <*> lift b <*> lift c <*> lift d
 
 producer4 :: ∀ a b c d e.
-  Eq (b /\ c /\ d /\ e)
+  Eq b => Eq c => Eq d => Eq e
   => (b -> c -> d -> e -> a)
   -> b -> c -> d -> e
   -> Producer a
-producer4 f b c d e = producer producer4Helper $ RefEq f /\ b /\ c /\ d /\ e
-
-producer4Helper :: ∀ a b c d e. RefEq (b -> c -> d -> e -> a) /\ b /\ c /\ d /\ e -> a
-producer4Helper (RefEq f /\ b /\ c /\ d /\ e) = f b c d e
+producer4 f b c d e = liftRefEq f <*> lift b <*> lift c <*> lift d <*> lift e
 
 producer5 :: ∀ a b c d e f.
-  Eq (b /\ c /\ d /\ e /\ f)
+  Eq b => Eq c => Eq d => Eq e => Eq f
   => (b -> c -> d -> e -> f -> a)
   -> b -> c -> d -> e -> f
   -> Producer a
-producer5 fn b c d e f = producer producer5Helper $ RefEq fn /\ b /\ c /\ d /\ e /\ f
-
-producer5Helper :: ∀ a b c d e f.
-  RefEq (b -> c -> d -> e -> f -> a) /\ b /\ c /\ d /\ e /\ f -> a
-producer5Helper (RefEq fn /\ b /\ c /\ d /\ e /\ f) = fn b c d e f
+producer5 fn b c d e f =
+  liftRefEq fn
+  <*> lift b <*> lift c <*> lift d <*> lift e <*> lift f
 
 producer6 :: ∀ a b c d e f g.
-  Eq (b /\ c /\ d /\ e /\ f /\ g)
+  Eq b => Eq c => Eq d => Eq e => Eq f => Eq g
   => (b -> c -> d -> e -> f -> g -> a)
   -> b -> c -> d -> e -> f -> g
   -> Producer a
 producer6 fn b c d e f g =
-  producer producer6Helper
-  $ RefEq fn /\ b /\ c /\ d /\ e /\ f /\ g
-
-producer6Helper :: ∀ a b c d e f g.
-  RefEq (b -> c -> d -> e -> f -> g -> a) /\ b /\ c /\ d /\ e /\ f /\ g -> a
-producer6Helper (RefEq fn /\ b /\ c /\ d /\ e /\ f /\ g) = fn b c d e f g
+  liftRefEq fn
+  <*> lift b <*> lift c <*> lift d <*> lift e <*> lift f <*> lift g
 
 lift :: ∀ a. Eq a => a -> Producer a
 lift = producer identity

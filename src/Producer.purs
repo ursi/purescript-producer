@@ -44,6 +44,7 @@ instance eqProducer :: Eq (Producer a) where
         p2
           \(f2 /\ b2) ->
             if f1 === f2 then
+              -- b1 and b2 must be the same type because f1 and f2 are the same function
               unsafeEq b1 b2
             else
               false

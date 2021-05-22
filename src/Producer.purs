@@ -13,8 +13,9 @@ module Producer
   )
   where
 
-import MasonPrelude
+import Prelude
 
+import Data.Tuple.Nested (type (/\), (/\))
 import RefEq (RefEq(..), (===))
 
 foreign import unsafeEqImpl :: ∀ a b. (a -> a -> Boolean) -> a -> b -> Boolean
@@ -92,7 +93,7 @@ lift = producer identity
 
 -- | The producer will be equal to other Producers if what they produce is referentially equal
 liftRefEq :: ∀ a. a -> Producer a
-liftRefEq = producer unRefEq <. RefEq
+liftRefEq = producer unRefEq <<< RefEq
 
 unRefEq :: ∀ a. RefEq a -> a
 unRefEq (RefEq a) = a

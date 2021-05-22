@@ -2,7 +2,7 @@
   with ps-pkgs;
   let inherit (ps-pkgs-ns) ursi; in
   { dependencies =
-      [ ursi.prelude
+      [ tuples
         ursi.refeq
       ];
   }

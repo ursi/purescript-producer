@@ -22,6 +22,7 @@ foreign import unsafeEqImpl :: ∀ a b. (a -> a -> Boolean) -> a -> b -> Boolean
 unsafeEq :: ∀ a b. Eq a => a -> b -> Boolean
 unsafeEq = unsafeEqImpl eq
 
+-- https://thimoteus.github.io/posts/2018-09-21-existential-types.html
 newtype Producer a = Producer (∀ r. (∀ b. Eq b => (b -> a) /\ b -> r) -> r)
 
 instance functorProducer :: Functor Producer where

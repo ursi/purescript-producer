@@ -1,9 +1,8 @@
 module Producer
   ( Producer(..)
-  , class Producible
-  , produce
-  , class Producerable
+  , class Produce
   , lift
+  , produce
   , producer
   , producer2
   , producer3
@@ -107,16 +106,20 @@ producer6Helper :: ∀ a b c d e f g.
   RefEq (b -> c -> d -> e -> f -> g -> a) /\ b /\ c /\ d /\ e /\ f /\ g -> a
 producer6Helper (RefEq fn /\ b /\ c /\ d /\ e /\ f /\ g) = fn b c d e f g
 
-class Producerable a b | a -> b where
+class Produce a b | a -> b where
   lift :: a -> Producer b
+  produce :: a -> b
 
--- | For the `Producerable (a -> b) (a -> b)` instance, it will be equal to other `Producer`s if the functions are referentially equal. This documentation is here because apparently else instances can't get their own documentation.
-instance producerableProducer :: Producerable (Producer a) a where
+-- | For the `Produce (a -> b) (a -> b)` instance of `lift`, the output will be equal to other `Producer`s if the functions are referentially equal. This documentation is here because apparently else instances can't get their own documentation.
+instance produceProducer :: Produce (Producer a) a where
   lift = identity
-else instance producerableab :: Producerable (a -> b) (a -> b) where
+  produce (Producer p) = p \(f /\ b) -> f b
+else instance produceab :: Produce (a -> b) (a -> b) where
   lift = producer unRefEq <<< RefEq
-else instance producerablea :: Eq a => Producerable a a where
+  produce = identity
+else instance producea :: Eq a => Produce a a where
   lift = producer identity
+  produce = identity
 
 -- | The producer will be equal to other Producers if what they produce is referentially equal
 liftRefEq :: ∀ a. a -> Producer a
@@ -124,11 +127,3 @@ liftRefEq = producer unRefEq <<< RefEq
 
 unRefEq :: ∀ a. RefEq a -> a
 unRefEq (RefEq a) = a
-
-class Producible a b | a -> b where
-  produce :: a -> b
-
-instance producibleProducer :: Producible (Producer a) a where
-  produce (Producer p) = p \(f /\ b) -> f b
-else instance producibleA :: Producible a a where
-  produce = identity

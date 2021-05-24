@@ -12,7 +12,6 @@ import Producer
   , producer6
   , produce
   , lift
-  , liftRefEq
   )
 import Test.Assert (assert', assertFalse')
 
@@ -37,8 +36,12 @@ main = do
   assertFalse' "2" $ producer log "best" == producer log "test"
   assert' "3" $ (plus1 <$> lift 5) == (plus1 <$> lift 5)
   assert' "4" $ (produce $ plus1 <$> lift 5) == 6
-  assert' "5" $ liftRefEq plus1 == liftRefEq plus1
-  assertFalse' "6" $ liftRefEq plus1 == liftRefEq (_ + 1)
+  assert' "5" $ lift plus1 == lift plus1
+  assertFalse' "6" $ lift plus1 == lift (_ + 1)
+  assert' "6-1" $ lift 1 == lift 1
+  assertFalse' "6-2" $ lift 1 == lift 2
+  assert' "6-3" $ lift (lift 1) == lift (lift 1)
+  assertFalse' "6-4" $ lift (lift 1) == lift (lift 2)
   assert' "7" $ producer2 (+) 1 2 == producer2 (+) 1 2
   assertFalse' "8" $ producer2 (+) 1 2 == producer2 (+) 2 2
   assert' "9" $ producer3 add3 1 2 3 == producer3 add3 1 2 3

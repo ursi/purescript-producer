@@ -121,9 +121,5 @@ else instance producea :: Eq a => Produce a a where
   lift = producer identity
   produce = identity
 
--- | The producer will be equal to other Producers if what they produce is referentially equal
-liftRefEq :: ∀ a. a -> Producer a
-liftRefEq = producer unRefEq <<< RefEq
-
 unRefEq :: ∀ a. RefEq a -> a
 unRefEq (RefEq a) = a

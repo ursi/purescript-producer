@@ -1,6 +1,7 @@
 module Producer
   ( Producer(..)
   , class Produce
+  , map
   , lift
   , produce
   , producer
@@ -25,13 +26,14 @@ unsafeEq = unsafeEqImpl eq
 -- https://thimoteus.github.io/posts/2018-09-21-existential-types.html
 newtype Producer a = Producer (∀ r. (∀ b. Eq b => (b -> a) /\ b -> r) -> r)
 
-instance Functor Producer where
-  map f p = producer mapHelper $ RefEq f /\ p
+-- | We use this instead of making Producer a functor because it fails both functor laws.
+map :: ∀ a b. (a -> b) -> Producer a -> Producer b
+map f p = producer mapHelper $ RefEq f /\ p
 
 mapHelper :: ∀ a b. RefEq (a -> b) /\ Producer a -> b
 mapHelper ((RefEq f) /\ p) = f $ produce p
 
-{-
+{- (This comment is from when there was a Functor instance)
 An apply instance can be created, however, it fails to satisfy this test
 
 (producer add 1 <*> lift 2)  == (producer2 add 1 2)

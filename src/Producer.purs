@@ -25,7 +25,7 @@ unsafeEq = unsafeEqImpl eq
 -- https://thimoteus.github.io/posts/2018-09-21-existential-types.html
 newtype Producer a = Producer (∀ r. (∀ b. Eq b => (b -> a) /\ b -> r) -> r)
 
-instance functorProducer :: Functor Producer where
+instance Functor Producer where
   map f p = producer mapHelper $ RefEq f /\ p
 
 mapHelper :: ∀ a b. RefEq (a -> b) /\ Producer a -> b
@@ -45,7 +45,7 @@ applyHelper :: ∀ a b. Producer (a -> b) /\ Producer a -> b
 applyHelper (pf /\ pa) = produce pf $ produce pa
 -}
 
-instance eqProducer :: Eq (Producer a) where
+instance Eq (Producer a) where
   eq (Producer p1) (Producer p2) =
     p1
       \(f1 /\ b1) ->
@@ -111,13 +111,13 @@ class Produce a b | a -> b where
   produce :: a -> b
 
 -- | For the `Produce (a -> b) (a -> b)` instance of `lift`, the output will be equal to other `Producer`s if the functions are referentially equal. This documentation is here because apparently else instances can't get their own documentation.
-instance produceProducer :: Produce (Producer a) a where
+instance Produce (Producer a) a where
   lift = identity
   produce (Producer p) = p \(f /\ b) -> f b
-else instance produceab :: Produce (a -> b) (a -> b) where
+else instance Produce (a -> b) (a -> b) where
   lift = producer unRefEq <<< RefEq
   produce = identity
-else instance producea :: Eq a => Produce a a where
+else instance Eq a => Produce a a where
   lift = producer identity
   produce = identity
 

@@ -1,1 +1,1 @@
-exports.unsafeEqImpl = eq => a => b => eq(a)(b);
+export const unsafeEqImpl = eq => a => b => eq(a)(b);

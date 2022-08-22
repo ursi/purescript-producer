@@ -1,6 +1,6 @@
 module Test.Main where
 
-import MasonPrelude hiding (log)
+import MasonPrelude hiding (log, map)
 
 import Effect.Console (log)
 import Producer
@@ -12,6 +12,7 @@ import Producer
   , producer6
   , produce
   , lift
+  , map
   )
 import Test.Assert (assert', assertFalse')
 
@@ -34,8 +35,8 @@ main :: Effect Unit
 main = do
   assert' "1" $ producer log "test" == producer log "test"
   assertFalse' "2" $ producer log "best" == producer log "test"
-  assert' "3" $ (plus1 <$> lift 5) == (plus1 <$> lift 5)
-  assert' "4" $ (produce $ plus1 <$> lift 5) == 6
+  assert' "3" $ (map plus1 $ lift 5) == (map plus1 $ lift 5)
+  assert' "4" $ (produce $ map plus1 $ lift 5) == 6
   assert' "5" $ lift plus1 == lift plus1
   assertFalse' "6" $ lift plus1 == lift (_ + 1)
   assert' "6-1" $ lift 1 == lift 1
